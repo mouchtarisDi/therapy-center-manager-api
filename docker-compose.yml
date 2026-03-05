@@ -3,7 +3,7 @@ services:
     image: postgres:16
     container_name: tcm_postgres
     environment:
-      POSTGRES_DB: therapy_center
+      POSTGRES_DB: therapy
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: postgres
     ports:
