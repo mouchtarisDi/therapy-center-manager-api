@@ -15,3 +15,5 @@ class Student(Base):
     last_name = Column(String, nullable=False)
 
     center = relationship("Center")
+    sessions = relationship("TherapySession", back_populates="student", cascade="all, delete-orphan")
+    

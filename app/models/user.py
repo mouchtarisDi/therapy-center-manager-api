@@ -23,3 +23,5 @@ class User(Base):
     )
 
     memberships = relationship("Membership", back_populates="user", cascade="all, delete-orphan")
+    sessions = relationship("TherapySession", back_populates="therapist")
+    

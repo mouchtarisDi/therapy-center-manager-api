@@ -6,13 +6,14 @@ from app.core.config import settings
 from app.db.session import engine
 from app.api.router import api_router
 from app.db.base import Base
+from app.db.models import *  # noqa: F401,F403
 
 from fastapi.middleware.cors import CORSMiddleware
 
 app = FastAPI(title=settings.APP_NAME)
 
 Base.metadata.create_all(bind=engine)
-app.include_router(api_router)
+
 
 app.add_middleware(
     CORSMiddleware,
@@ -37,3 +38,5 @@ def health():
         return {"status": "ok", "db": "ok"}
     except Exception:
         return JSONResponse(status_code=503, content={"status": "ok", "db": "down"})
+
+app.include_router(api_router)

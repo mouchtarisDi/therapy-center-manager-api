@@ -19,3 +19,5 @@ class Center(Base):
     )
 
     memberships = relationship("Membership", back_populates="center", cascade="all, delete-orphan")
+    sessions = relationship("TherapySession", back_populates="center", cascade="all, delete-orphan")
+    
