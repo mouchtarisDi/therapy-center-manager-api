@@ -6,8 +6,12 @@ __pycache__/
 .Python
 
 # Virtual environment
-venv/
+.venv/
 .env
+.idea/
+.vscode/
+.mypy_cache/
+.pytest_cache/
 
 # Alembic cache
 alembic/__pycache__/
