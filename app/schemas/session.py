@@ -1,5 +1,6 @@
 from datetime import datetime
 from typing import Literal
+from pydantic import Field
 
 from pydantic import BaseModel
 
@@ -11,12 +12,14 @@ class SessionCreate(BaseModel):
     student_id: int
     therapist_user_id: int | None = None
     scheduled_at: datetime
+    duration_minutes: int = Field(default=60, ge=15, le=240)
     notes: str | None = None
 
 
 class SessionUpdate(BaseModel):
     therapist_user_id: int | None = None
     scheduled_at: datetime | None = None
+    duration_minutes: int | None = Field(default=None, ge=15, le=240)
     status: SessionStatusLiteral | None = None
     notes: str | None = None
 

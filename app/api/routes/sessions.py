@@ -12,6 +12,7 @@ from app.services.session_service import (
     create_session,
     delete_session,
     list_sessions,
+    therapist_has_conflict,
     update_session,
 )
 
@@ -32,6 +33,7 @@ def create_session_endpoint(
             student_id=payload.student_id,
             therapist_user_id=payload.therapist_user_id,
             scheduled_at=payload.scheduled_at,
+            duration_minutes=payload.duration_minutes,
             notes=payload.notes,
         )
     except ValueError as e:
@@ -43,22 +45,21 @@ def list_sessions_endpoint(
     center: Center = Depends(get_current_center),
     _m=Depends(require_center_roles(Role.OWNER, Role.ADMIN, Role.STAFF)),
     student_id: int | None = Query(default=None),
+    therapist_user_id: int | None = Query(default=None),
     status_value: str | None = Query(default=None, alias="status"),
     date_from: datetime | None = Query(default=None),
     date_to: datetime | None = Query(default=None),
     db: Session = Depends(get_db),
 ):
-    try:
-        return list_sessions(
-            db,
-            center_id=center.id,
-            student_id=student_id,
-            status=status_value,
-            date_from=date_from,
-            date_to=date_to,
-        )
-    except ValueError as e:
-        raise HTTPException(status_code=400, detail=str(e))
+    return list_sessions(
+        db,
+        center_id=center.id,
+        student_id=student_id,
+        therapist_user_id=therapist_user_id,
+        status=status_value,
+        date_from=date_from,
+        date_to=date_to,
+    )
 
 
 @router.patch("/{session_id}", response_model=SessionOut)
@@ -76,6 +77,7 @@ def update_session_endpoint(
             session_id=session_id,
             therapist_user_id=payload.therapist_user_id,
             scheduled_at=payload.scheduled_at,
+            duration_minutes=payload.duration_minutes,
             status=payload.status,
             notes=payload.notes,
         )
@@ -97,3 +99,28 @@ def delete_session_endpoint(
         delete_session(db, center_id=center.id, session_id=session_id)
     except ValueError as e:
         raise HTTPException(status_code=404, detail=str(e))
+
+
+@router.get("/check-availability")
+def check_therapist_availability(
+    therapist_user_id: int,
+    scheduled_at: datetime,
+    duration_minutes: int = 60,
+    center: Center = Depends(get_current_center),
+    _m=Depends(require_center_roles(Role.OWNER, Role.ADMIN, Role.STAFF)),
+    db: Session = Depends(get_db),
+):
+    has_conflict = therapist_has_conflict(
+        db,
+        center_id=center.id,
+        therapist_user_id=therapist_user_id,
+        scheduled_at=scheduled_at,
+        duration_minutes=duration_minutes,
+    )
+
+    return {
+        "available": not has_conflict,
+        "therapist_user_id": therapist_user_id,
+        "scheduled_at": scheduled_at,
+        "duration_minutes": duration_minutes,
+    }

@@ -42,6 +42,12 @@ class TherapySession(Base):
         index=True,
     )
 
+    duration_minutes: Mapped[int] = mapped_column(
+        Integer,
+        nullable=False,
+        default=60,
+    )
+
     status: Mapped[SessionStatus] = mapped_column(
         SAEnum(SessionStatus, name="session_status_enum"),
         default=SessionStatus.SCHEDULED,
