@@ -1,4 +1,4 @@
-from datetime import datetime
+from datetime import datetime, timezone
 
 from sqlalchemy import select
 from sqlalchemy.orm import Session
@@ -16,7 +16,6 @@ def create_payment(
     method: str,
     notes: str | None,
 ) -> Payment:
-
     student = db.get(Student, student_id)
 
     if not student or student.center_id != center_id:
@@ -27,14 +26,13 @@ def create_payment(
         student_id=student_id,
         amount=amount,
         method=method,
-        payment_date=datetime.utcnow(),
+        payment_date=datetime.now(timezone.utc),
         notes=notes,
     )
 
     db.add(payment)
     db.commit()
     db.refresh(payment)
-
     return payment
 
 
@@ -44,7 +42,6 @@ def list_payments(
     center_id: int,
     student_id: int | None = None,
 ) -> list[Payment]:
-
     stmt = select(Payment).where(Payment.center_id == center_id)
 
     if student_id is not None:
@@ -55,11 +52,45 @@ def list_payments(
     return list(db.execute(stmt).scalars().all())
 
 
-def delete_payment(db: Session, *, payment_id: int, center_id: int):
+def get_payment_by_id(db: Session, *, center_id: int, payment_id: int) -> Payment | None:
+    stmt = select(Payment).where(
+        Payment.id == payment_id,
+        Payment.center_id == center_id,
+    )
+    return db.execute(stmt).scalar_one_or_none()
 
-    payment = db.get(Payment, payment_id)
 
-    if not payment or payment.center_id != center_id:
+def update_payment(
+    db: Session,
+    *,
+    center_id: int,
+    payment_id: int,
+    amount: float | None = None,
+    method: str | None = None,
+    notes: str | None = None,
+) -> Payment:
+    payment = get_payment_by_id(db, center_id=center_id, payment_id=payment_id)
+    if not payment:
+        raise ValueError("Payment not found")
+
+    if amount is not None:
+        payment.amount = amount
+
+    if method is not None:
+        payment.method = method
+
+    if notes is not None:
+        payment.notes = notes
+
+    db.commit()
+    db.refresh(payment)
+    return payment
+
+
+def delete_payment(db: Session, *, payment_id: int, center_id: int) -> None:
+    payment = get_payment_by_id(db, center_id=center_id, payment_id=payment_id)
+
+    if not payment:
         raise ValueError("Payment not found")
 
     db.delete(payment)

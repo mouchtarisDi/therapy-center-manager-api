@@ -1,7 +1,7 @@
 from datetime import datetime
 from typing import Literal
 
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 
 PaymentMethodLiteral = Literal["CASH", "CARD", "BANK_TRANSFER"]
@@ -9,13 +9,13 @@ PaymentMethodLiteral = Literal["CASH", "CARD", "BANK_TRANSFER"]
 
 class PaymentCreate(BaseModel):
     student_id: int
-    amount: float
+    amount: float = Field(gt=0)
     method: PaymentMethodLiteral
     notes: str | None = None
 
 
 class PaymentUpdate(BaseModel):
-    amount: float | None = None
+    amount: float | None = Field(default=None, gt=0)
     method: PaymentMethodLiteral | None = None
     notes: str | None = None
 
