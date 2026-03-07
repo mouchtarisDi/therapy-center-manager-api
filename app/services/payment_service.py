@@ -41,11 +41,31 @@ def list_payments(
     *,
     center_id: int,
     student_id: int | None = None,
+    method: str | None = None,
+    date_from: datetime | None = None,
+    date_to: datetime | None = None,
+    min_amount: float | None = None,
+    max_amount: float | None = None,
 ) -> list[Payment]:
     stmt = select(Payment).where(Payment.center_id == center_id)
 
     if student_id is not None:
         stmt = stmt.where(Payment.student_id == student_id)
+
+    if method is not None:
+        stmt = stmt.where(Payment.method == method)
+
+    if date_from is not None:
+        stmt = stmt.where(Payment.payment_date >= date_from)
+
+    if date_to is not None:
+        stmt = stmt.where(Payment.payment_date <= date_to)
+
+    if min_amount is not None:
+        stmt = stmt.where(Payment.amount >= min_amount)
+
+    if max_amount is not None:
+        stmt = stmt.where(Payment.amount <= max_amount)
 
     stmt = stmt.order_by(Payment.payment_date.desc())
 

@@ -1,4 +1,6 @@
-from fastapi import APIRouter, Depends, HTTPException, status
+from datetime import datetime
+
+from fastapi import APIRouter, Depends, HTTPException, Query, status
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_center, require_center_roles
@@ -40,9 +42,24 @@ def create_payment_endpoint(
 def list_payments_endpoint(
     center=Depends(get_current_center),
     _m=Depends(require_center_roles(Role.OWNER, Role.ADMIN, Role.STAFF)),
+    student_id: int | None = Query(default=None),
+    method: str | None = Query(default=None),
+    date_from: datetime | None = Query(default=None),
+    date_to: datetime | None = Query(default=None),
+    min_amount: float | None = Query(default=None),
+    max_amount: float | None = Query(default=None),
     db: Session = Depends(get_db),
 ):
-    return list_payments(db, center_id=center.id)
+    return list_payments(
+        db,
+        center_id=center.id,
+        student_id=student_id,
+        method=method,
+        date_from=date_from,
+        date_to=date_to,
+        min_amount=min_amount,
+        max_amount=max_amount,
+    )
 
 
 @router.get("/{payment_id}", response_model=PaymentOut)
