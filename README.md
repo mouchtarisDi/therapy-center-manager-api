@@ -33,6 +33,39 @@ This project was designed as a real-world style backend system for handling:
 - Docker
 - JWT / Passlib
 
+## Main Entities
+
+- Users
+- Centers
+- MEmberships
+- Students
+- Sessions
+- Payments
+
+##API Capabilities
+
+- Register and login users
+- Restrict access based on center, membership and role
+- Create and manage student profiles
+- Schedule sessions with time conflict detection
+- Check therapist availability
+- Track student payments
+- Search students by name, AMKA, or guardian
+- Filter sessions and payments by multiple criteria
+
+## Why I Built This
+
+I built this project to practice backend engineering using a more realistic business scenario instead of a simple CRUD tutorial project.
+The goal was to design a structured API that resembles a real admin/business system and demonstrates backend concepts such as authentication, RBAC, multi-tenant architecture, scheduling logic, and data modeling.
+
+## Future Improvements
+
+- Alembic migrations
+- Automated tests
+- React frontend
+- Reporting dashboard
+- Deployment and production configuration
+
 ## Project Structure
 
 ```text
@@ -54,35 +87,3 @@ app/
   services/
   main.py
 
-## Main Entities
-
--Users
--Centers
--MEmberships
--Students
--Sessions
--Payments
-
-##API Capabilities
-
--Register and login users
--Restrict access based on center, membership and role
--Create and manage student profiles
--Schedule sessions with time conflict detection
--Check therapist availability
--Track student payments
--Search students by name, AMKA, or guardian
--Filter sessions and payments by multiple criteria
-
-## Why I Built This
-
-I built this project to practice backend engineering using a more realistic business scenario instead of a simple CRUD tutorial project.
-The goal was to design a structured API that resembles a real admin/business system and demonstrates backend concepts such as authentication, RBAC, multi-tenant architecture, scheduling logic, and data modeling.
-
-## Future Improvements
-
--Alembic migrations
--Automated tests
--React frontend
--Reporting dashboard
--Deployment and production configuration
