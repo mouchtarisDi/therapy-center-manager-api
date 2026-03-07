@@ -16,4 +16,8 @@ class Student(Base):
 
     center = relationship("Center")
     sessions = relationship("TherapySession", back_populates="student", cascade="all, delete-orphan")
-    
+    payments = relationship(
+        "Payment",
+        back_populates="student",
+        cascade="all, delete-orphan"
+    )
