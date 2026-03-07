@@ -42,7 +42,7 @@ This project was designed as a real-world style backend system for handling:
 - Sessions
 - Payments
 
-##API Capabilities
+## API Capabilities
 
 - Register and login users
 - Restrict access based on center, membership and role
